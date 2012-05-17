@@ -12,13 +12,13 @@ Add the gem to your Gemfile:
 
 If you're using Rails, this will automatically add a route at @/panthoot/hooks@ to capture messages from MailChimp. Otherwise, mount the Rack app @Panthoot::App@ to wherever you like. Make sure you add that URL to your MailChimp account settings, otherwise this will all be for naught.
 
-The next step is to tell Panthoot that you want to be informed whenever MailChimp sends something your way. This is done via a listener class:
+The next step is to tell Panthoot that you want to be informed whenever MailChimp sends something your way. In Rails, stick the configuration in an initializer, but for Rack just make sure it's set as part of your app load process.
 
 <pre><code>Panthoot.configure do |config|
   config.listener = MailChimpListener
 end</code></pre>
 
-You can call this class whatever you like, but it should respond to the following methods:
+The listener class is something you'll need to define. You can call this class whatever you like, but it should respond to the following methods:
 
 * #subscribe(subscription, fired_at)
 * #unsubscribe(unsubscription, fired_at)
