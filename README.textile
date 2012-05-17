@@ -1,0 +1,44 @@
+h1. Pant-hoot
+
+bq. The pant-hoot is a vocalization of chimpanzees that begins with breathy, low-pitched hoots that makes a transition into a series of quicker, higher-pitched in-and-out pants building to a loud climax.
+
+Pant-hoot is a gem that provides the API MailChimp expects for its webhooks, and then passes on those notifications to you in a sensible, Ruby-infused manner. If you're using Rails, then it functions as a Rails Engine. Otherwise, you'll have a Rack app to use as you see fit.
+
+h2. Usage
+
+Add the gem to your Gemfile:
+
+<pre><code>gem 'panthoot', '~> 0.0.1'</code></pre>
+
+If you're using Rails, this will automatically add a route at @/panthoot/hooks@ to capture messages from MailChimp. Otherwise, mount the Rack app @Panthoot::App@ to wherever you like. Make sure you add that URL to your MailChimp account settings, otherwise this will all be for naught.
+
+The next step is to tell Panthoot that you want to be informed whenever MailChimp sends something your way. This is done via a listener class:
+
+<pre><code>Panthoot.configure do |config|
+  config.listener = MailChimpListener
+end</code></pre>
+
+You can call this class whatever you like, but it should respond to the following methods:
+
+* #subscribe(subscription, fired_at)
+* #unsubscribe(unsubscription, fired_at)
+* #profile_update(update, fired_at)
+* #email_address_change(change, fired_at)
+* #email_cleaned(clean, fired_at)
+* #campaign_sending_status(status, fired_at)
+
+As you can probably guess from the method signatures, each notification will provide an object with all the data from MailChimp, plus the time the notification was fired. When the methods get called, you get to do your thing with the data provided. Have fun!
+
+h2. Contributing
+
+# Fork it
+# Create your feature branch (`git checkout -b my-new-feature`)
+# Commit your changes (`git commit -am 'Added some feature'`)
+# Push to the branch (`git push origin my-new-feature`)
+# Create new Pull Request
+
+Pull requests without tests may be rejected purely on that basis. You've been warned.
+
+h2. Credits
+
+Copyright (c) 2012, Panthoot is developed and maintained by Pat Allan on behalf of "Inspire9":http://inspire9.com, and is released under the open MIT Licence.
