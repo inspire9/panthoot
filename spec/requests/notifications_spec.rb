@@ -65,7 +65,8 @@ describe 'MailChimp Webhook Notifications' do
       post '/panthoot/hooks', 'type' => 'unsubscribe',
         'fired_at' => fired_at.to_s(:db), 'data[action]' => 'unsub',
         'data[reason]' => 'manual', 'data[id]' => '8a25ff1d98',
-        'data[list_id]' => 'a6b5da1054', 'data[email]' => 'api@mailchimp.com',
+        'data[list_id]' => 'a6b5da1054',
+        'data[email]' => 'api+unsub@mailchimp.com',
         'data[email_type]' => 'html',
         'data[merges][EMAIL]' => 'api@mailchimp.com',
         'data[merges][FNAME]' => 'MailChimp',
@@ -81,7 +82,8 @@ describe 'MailChimp Webhook Notifications' do
       post '/panthoot/hooks', 'type' => 'unsubscribe',
         'fired_at' => fired_at.to_s(:db), 'data[action]' => 'unsub',
         'data[reason]' => 'manual', 'data[id]' => '8a25ff1d98',
-        'data[list_id]' => 'a6b5da1054', 'data[email]' => 'api@mailchimp.com',
+        'data[list_id]' => 'a6b5da1054',
+        'data[email]' => 'api+unsub@mailchimp.com',
         'data[email_type]' => 'html',
         'data[merges][EMAIL]' => 'api@mailchimp.com',
         'data[merges][FNAME]' => 'MailChimp',
@@ -97,7 +99,7 @@ describe 'MailChimp Webhook Notifications' do
       MailChimpListener.should_receive(:profile_update) do |profile, fired_at|
         profile.id.should          == '8a25ff1d98'
         profile.list_id.should     == 'a6b5da1054'
-        profile.email.should       == 'api+unsub@mailchimp.com'
+        profile.email.should       == 'api@mailchimp.com'
         profile.email_type.should  == 'html'
         profile.ip_opt.should      == '10.20.10.30'
         profile.merges.should == {
@@ -110,7 +112,8 @@ describe 'MailChimp Webhook Notifications' do
 
       post '/panthoot/hooks', 'type' => 'profile',
         'fired_at' => fired_at.to_s(:db), 'data[id]' => '8a25ff1d98',
-        'data[list_id]' => 'a6b5da1054', 'data[email]' => 'api@mailchimp.com',
+        'data[list_id]' => 'a6b5da1054',
+        'data[email]' => 'api@mailchimp.com',
         'data[email_type]' => 'html',
         'data[merges][EMAIL]' => 'api@mailchimp.com',
         'data[merges][FNAME]' => 'MailChimp',
@@ -124,7 +127,8 @@ describe 'MailChimp Webhook Notifications' do
 
       post '/panthoot/hooks', 'type' => 'profile',
         'fired_at' => fired_at.to_s(:db), 'data[id]' => '8a25ff1d98',
-        'data[list_id]' => 'a6b5da1054', 'data[email]' => 'api@mailchimp.com',
+        'data[list_id]' => 'a6b5da1054',
+        'data[email]' => 'api@mailchimp.com',
         'data[email_type]' => 'html',
         'data[merges][EMAIL]' => 'api@mailchimp.com',
         'data[merges][FNAME]' => 'MailChimp',
