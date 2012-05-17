@@ -15,6 +15,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = Panthoot::VERSION
 
+  gem.add_runtime_dependency 'hashie', '1.2.0'
+
   gem.add_development_dependency 'rails',       '3.2.2'
   gem.add_development_dependency 'rspec-rails', '2.10.1'
 end
