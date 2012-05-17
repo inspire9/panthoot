@@ -8,7 +8,7 @@ h2. Usage
 
 Add the gem to your Gemfile:
 
-<pre><code>gem 'panthoot', '~> 0.0.1'</code></pre>
+<pre><code>gem 'panthoot', '~> 0.1.0'</code></pre>
 
 If you're using Rails, this will automatically add a route at @/panthoot/hooks@ to capture messages from MailChimp. Otherwise, mount the Rack app @Panthoot::App@ to wherever you like. Make sure you add that URL to your MailChimp account settings, otherwise this will all be for naught.
 
