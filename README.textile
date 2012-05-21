@@ -18,14 +18,14 @@ The next step is to tell Panthoot that you want to be informed whenever MailChim
   config.listener = MailChimpListener
 end</code></pre>
 
-The listener class is something you'll need to define. You can call this class whatever you like, but it should respond to the following methods:
+The listener class is something you'll need to define. You can call this class whatever you like, but it should respond to the following *class* methods:
 
-* #subscribe(subscription, fired_at)
-* #unsubscribe(unsubscription, fired_at)
-* #profile_update(update, fired_at)
-* #email_address_change(change, fired_at)
-* #email_cleaned(clean, fired_at)
-* #campaign_sending_status(status, fired_at)
+* .subscribe(subscription, fired_at)
+* .unsubscribe(unsubscription, fired_at)
+* .profile_update(update, fired_at)
+* .email_address_change(change, fired_at)
+* .email_cleaned(clean, fired_at)
+* .campaign_sending_status(status, fired_at)
 
 As you can probably guess from the method signatures, each notification will provide an object with all the data from MailChimp, plus the time the notification was fired. When the methods get called, you get to do your thing with the data provided. Have fun!
 
