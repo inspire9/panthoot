@@ -1,7 +1,10 @@
-require 'rubygems'
 require 'bundler'
 
-Bundler.require :default, :development
+Bundler.setup :default, :development
+
+require 'rails'
+require 'combustion'
+require 'panthoot'
 
 Combustion.initialize! :action_controller
 
