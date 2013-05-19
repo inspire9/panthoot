@@ -9,9 +9,9 @@ class Panthoot::Translator
   }
 
   LISTENER_METHODS = {
-    'subscribe' => 'subscribe',    'unsubscribe' => 'unsubscribe',
-    'profile' => 'profile_update', 'upemail' => 'email_address_change',
-    'cleaned' => 'email_cleaned',  'campaign' => 'campaign_sending_status'
+    'subscribe' => 'subscribe',      'unsubscribe' => 'unsubscribe',
+    'profile'   => 'profile_update', 'upemail'     => 'email_address_change',
+    'cleaned'   => 'email_cleaned',  'campaign'    => 'campaign_sending_status'
   }
 
   def self.translate!(params)
@@ -23,7 +23,9 @@ class Panthoot::Translator
   end
 
   def translate!
-    Panthoot.listener.send LISTENER_METHODS[type], translated_object, fired_at
+    key = LISTENER_METHODS[type]
+    ActiveSupport::Notifications.instrument "#{key}.panthoot",
+      key.to_sym => translated_object, :fired_at => fired_at
   end
 
   private

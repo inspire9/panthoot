@@ -3,9 +3,26 @@ require 'spec_helper'
 describe 'MailChimp Webhook Notifications' do
   let(:fired_at) { Time.zone.local(2009, 3, 26, 21, 35, 57) }
 
+  def subscribe(type, &block)
+    ActiveSupport::Notifications.subscribe type, &block
+  end
+
+  before :each do
+    @lodged = false
+  end
+
+  after :each do
+    ActiveSupport::Notifications.unsubscribe @subscription
+
+    @lodged.should be_true
+  end
+
   describe 'subscribes' do
     it "sends the listener a subscription object" do
-      MailChimpListener.should_receive(:subscribe) do |subscription, fired_at|
+      @subscription = subscribe('subscribe.panthoot') { |*args|
+        event        = ActiveSupport::Notifications::Event.new *args
+        subscription = event.payload[:subscribe]
+
         subscription.id.should         == '8a25ff1d98'
         subscription.list_id.should    == 'a6b5da1054'
         subscription.email.should      == 'api@mailchimp.com'
@@ -17,7 +34,9 @@ describe 'MailChimp Webhook Notifications' do
           'FNAME' => 'MailChimp',
           'LNAME' => 'API'
         }
-      end
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'subscribe',
         'fired_at' => fired_at.to_s(:db), 'data[id]' => '8a25ff1d98',
@@ -30,7 +49,12 @@ describe 'MailChimp Webhook Notifications' do
     end
 
     it "sends the listener the fired at timestamp" do
-      MailChimpListener.should_receive(:subscribe).with(anything, fired_at)
+      @subscription = subscribe('subscribe.panthoot') { |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        event.payload[:fired_at].should == fired_at
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'subscribe',
         'fired_at' => fired_at.to_s(:db), 'data[id]' => '8a25ff1d98',
@@ -45,7 +69,10 @@ describe 'MailChimp Webhook Notifications' do
 
   describe 'unsubscribes' do
     it "sends the listener an unsubscription object" do
-      MailChimpListener.should_receive(:unsubscribe) do |unsubscription, fired_at|
+      @subscription = subscribe('unsubscribe.panthoot') { |*args|
+        event          = ActiveSupport::Notifications::Event.new *args
+        unsubscription = event.payload[:unsubscribe]
+
         unsubscription.action.should      == 'unsub'
         unsubscription.reason.should      == 'manual'
         unsubscription.id.should          == '8a25ff1d98'
@@ -60,7 +87,9 @@ describe 'MailChimp Webhook Notifications' do
           'LNAME'     => 'API',
           'INTERESTS' => 'Group1,Group2'
         }
-      end
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'unsubscribe',
         'fired_at' => fired_at.to_s(:db), 'data[action]' => 'unsub',
@@ -77,7 +106,12 @@ describe 'MailChimp Webhook Notifications' do
     end
 
     it "sends the listener the fired at timestamp" do
-      MailChimpListener.should_receive(:unsubscribe).with(anything, fired_at)
+      @subscription = subscribe('unsubscribe.panthoot') { |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        event.payload[:fired_at].should == fired_at
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'unsubscribe',
         'fired_at' => fired_at.to_s(:db), 'data[action]' => 'unsub',
@@ -96,7 +130,10 @@ describe 'MailChimp Webhook Notifications' do
 
   describe 'profile updates' do
     it "sends the listener a profile object" do
-      MailChimpListener.should_receive(:profile_update) do |profile, fired_at|
+      @subscription = subscribe('profile_update.panthoot') { |*args|
+        event   = ActiveSupport::Notifications::Event.new *args
+        profile = event.payload[:profile_update]
+
         profile.id.should          == '8a25ff1d98'
         profile.list_id.should     == 'a6b5da1054'
         profile.email.should       == 'api@mailchimp.com'
@@ -108,7 +145,9 @@ describe 'MailChimp Webhook Notifications' do
           'LNAME'     => 'API',
           'INTERESTS' => 'Group1,Group2'
         }
-      end
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'profile',
         'fired_at' => fired_at.to_s(:db), 'data[id]' => '8a25ff1d98',
@@ -123,7 +162,12 @@ describe 'MailChimp Webhook Notifications' do
     end
 
     it "sends the listener the fired at timestamp" do
-      MailChimpListener.should_receive(:profile_update).with(anything, fired_at)
+      @subscription = subscribe('profile_update.panthoot') { |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        event.payload[:fired_at].should == fired_at
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'profile',
         'fired_at' => fired_at.to_s(:db), 'data[id]' => '8a25ff1d98',
@@ -140,12 +184,17 @@ describe 'MailChimp Webhook Notifications' do
 
   describe 'email address changes' do
     it "sends the listener an email address change object" do
-      MailChimpListener.should_receive(:email_address_change) do |email_change, fired_at|
+      @subscription = subscribe('email_address_change.panthoot') { |*args|
+        event        = ActiveSupport::Notifications::Event.new *args
+        email_change = event.payload[:email_address_change]
+
         email_change.list_id.should   == 'a6b5da1054'
         email_change.new_id.should    == '51da8c3259'
         email_change.new_email.should == 'api+new@mailchimp.com'
         email_change.old_email.should == 'api+old@mailchimp.com'
-      end
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'upemail',
         'fired_at' => fired_at.to_s(:db), 'data[list_id]' => 'a6b5da1054',
@@ -155,8 +204,12 @@ describe 'MailChimp Webhook Notifications' do
     end
 
     it "sends the listener the fired at timestamp" do
-      MailChimpListener.should_receive(:email_address_change).
-        with(anything, fired_at)
+      @subscription = subscribe('email_address_change.panthoot') { |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        event.payload[:fired_at].should == fired_at
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'upemail',
         'fired_at' => fired_at.to_s(:db), 'data[list_id]' => 'a6b5da1054',
@@ -168,12 +221,17 @@ describe 'MailChimp Webhook Notifications' do
 
   describe 'cleaned emails' do
     it "sends the listener a cleaned email object" do
-      MailChimpListener.should_receive(:email_cleaned) do |cleaned, fired_at|
+      @subscription = subscribe('email_cleaned.panthoot') { |*args|
+        event   = ActiveSupport::Notifications::Event.new *args
+        cleaned = event.payload[:email_cleaned]
+
         cleaned.list_id.should     == 'a6b5da1054'
         cleaned.campaign_id.should == '4fjk2ma9xd'
         cleaned.reason.should      == 'hard'
         cleaned.email.should       == 'api+cleaned@mailchimp.com'
-      end
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'cleaned',
         'fired_at' => fired_at.to_s(:db), 'data[list_id]' => 'a6b5da1054',
@@ -182,7 +240,12 @@ describe 'MailChimp Webhook Notifications' do
     end
 
     it "sends the listener the fired at timestamp" do
-      MailChimpListener.should_receive(:email_cleaned).with(anything, fired_at)
+      @subscription = subscribe('email_cleaned.panthoot') { |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        event.payload[:fired_at].should == fired_at
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'cleaned',
         'fired_at' => fired_at.to_s(:db), 'data[list_id]' => 'a6b5da1054',
@@ -191,15 +254,20 @@ describe 'MailChimp Webhook Notifications' do
     end
   end
 
-  describe 'cleaned emails' do
+  describe 'campaign sending status' do
     it "sends the listener a campaign sending status object" do
-      MailChimpListener.should_receive(:campaign_sending_status) do |status, fired_at|
+      @subscription = subscribe('campaign_sending_status.panthoot') { |*args|
+        event  = ActiveSupport::Notifications::Event.new *args
+        status = event.payload[:campaign_sending_status]
+
         status.id.should      == '5aa2102003'
         status.subject.should == 'Test Campaign Subject'
         status.status.should  == 'sent'
         status.reason.should  == ''
         status.list_id.should == 'a6b5da1054'
-      end
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'campaign',
         'fired_at' => fired_at.to_s(:db), 'data[list_id]' => 'a6b5da1054',
@@ -208,8 +276,12 @@ describe 'MailChimp Webhook Notifications' do
     end
 
     it "sends the listener the fired at timestamp" do
-      MailChimpListener.should_receive(:campaign_sending_status).
-        with(anything, fired_at)
+      @subscription = subscribe('campaign_sending_status.panthoot') { |*args|
+        event = ActiveSupport::Notifications::Event.new *args
+        event.payload[:fired_at].should == fired_at
+
+        @lodged = true
+      }
 
       post '/panthoot/hooks', 'type' => 'campaign',
         'fired_at' => fired_at.to_s(:db), 'data[list_id]' => 'a6b5da1054',
