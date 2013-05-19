@@ -17,6 +17,5 @@ end
 require 'panthoot/app'
 require 'panthoot/data'
 require 'panthoot/translator'
-require 'panthoot/version'
 
 require 'panthoot/engine' if defined?(Rails)

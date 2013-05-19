@@ -1,6 +1,4 @@
 # -*- encoding: utf-8 -*-
-require File.expand_path('../lib/panthoot/version', __FILE__)
-
 Gem::Specification.new do |gem|
   gem.authors       = ['Pat Allan']
   gem.email         = ['pat@freelancing-gods.com']
@@ -13,7 +11,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   gem.name          = 'panthoot'
   gem.require_paths = ['lib']
-  gem.version       = Panthoot::VERSION
+  gem.version       = '0.1.0'
 
   gem.add_runtime_dependency 'hashie', '1.2.0'
 
