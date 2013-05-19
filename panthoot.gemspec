@@ -1,15 +1,15 @@
 # -*- encoding: utf-8 -*-
 Gem::Specification.new do |gem|
+  gem.name          = 'panthoot'
   gem.authors       = ['Pat Allan']
   gem.email         = ['pat@freelancing-gods.com']
-  gem.description   = 'Listener for MailChimp callbacks'
-  gem.summary       = 'Provides a listener for MailChimp callbacks for Rack/Rails apps'
+  gem.summary       = 'ActiveSupport::Notifications for MailChimp callbacks'
+  gem.description   = 'Provides an Rack/Rails API endpoint for MailChimp callbacks with corresponding ActiveSupport::Notifications.'
   gem.homepage      = 'https://github.com/inspire9/panthoot'
 
-  gem.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   gem.files         = `git ls-files`.split("\n")
   gem.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
-  gem.name          = 'panthoot'
+
   gem.require_paths = ['lib']
   gem.version       = '0.1.0'
 
