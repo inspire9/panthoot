@@ -16,7 +16,7 @@ The next step is to tell Panthoot that you want to be informed whenever MailChim
 
 <pre><code>ActiveSupport::Notifications.subscribe('subscribe.panthoot') do |*args|
   event        = ActiveSupport::Notifications::Event.new(*args)
-  subscription = event.payload[:subscription]
+  subscription = event.payload[:subscribe]
   fired_at     = event.payload[:fired_at]
 
   # use subscription data however you wish
