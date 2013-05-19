@@ -1,4 +1,3 @@
-require 'grape'
 require 'hashie'
 
 module Panthoot

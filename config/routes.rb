@@ -1,3 +1,3 @@
 Rails.application.routes.draw do
-  mount Panthoot::App => '/panthoot/hooks'
+  mount Panthoot::App.new => '/panthoot/hooks'
 end
