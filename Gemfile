@@ -1,4 +1,4 @@
-source :rubygems
+source 'https://rubygems.org'
 
 gem 'combustion',
   :git => 'git://github.com/pat/combustion',
