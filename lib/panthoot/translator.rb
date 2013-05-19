@@ -24,6 +24,8 @@ class Panthoot::Translator
 
   def translate!
     key = LISTENER_METHODS[type]
+    return if key.nil?
+
     ActiveSupport::Notifications.instrument "#{key}.panthoot",
       key.to_sym => translated_object, :fired_at => fired_at
   end

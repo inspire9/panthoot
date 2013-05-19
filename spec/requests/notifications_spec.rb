@@ -290,3 +290,9 @@ describe 'MailChimp Webhook Notifications' do
     end
   end
 end
+
+describe 'unknown notifications' do
+  it "should not complain" do
+    lambda { get '/panthoot/hooks' }.should_not raise_error
+  end
+end
