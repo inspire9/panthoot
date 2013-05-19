@@ -8,26 +8,30 @@ h2. Usage
 
 Add the gem to your Gemfile:
 
-<pre><code>gem 'panthoot', '~> 0.1.0'</code></pre>
+<pre><code>gem 'panthoot', '~> 0.2.0'</code></pre>
 
-If you're using Rails, this will automatically add a route at @/panthoot/hooks@ to capture messages from MailChimp. Otherwise, mount the Rack app @Panthoot::App@ to wherever you like. Make sure you add that URL to your MailChimp account settings, otherwise this will all be for naught.
+If you're using Rails, this will automatically add a route at @/panthoot/hooks@ to capture messages from MailChimp. Otherwise, mount the Rack app @Panthoot::App.new@ to wherever you like. Make sure you add that URL to your MailChimp account settings, otherwise this will all be for naught.
 
 The next step is to tell Panthoot that you want to be informed whenever MailChimp sends something your way. In Rails, stick the configuration in an initializer, but for Rack just make sure it's set as part of your app load process.
 
-<pre><code>Panthoot.configure do |config|
-  config.listener = MailChimpListener
+<pre><code>ActiveSupport::Notifications.subscribe('subscribe.panthoot') do |*args|
+  event        = ActiveSupport::Notifications::Event.new(*args)
+  subscription = event.payload[:subscription]
+  fired_at     = event.payload[:fired_at]
+
+  # use subscription data however you wish
 end</code></pre>
 
-The listener class is something you'll need to define. You can call this class whatever you like, but it should respond to the following *class* methods:
+The above sample is just listening to new subscriptions, but there's other events as well - the event prefix matches the payload key in each case:
 
-* .subscribe(subscription, fired_at)
-* .unsubscribe(unsubscription, fired_at)
-* .profile_update(update, fired_at)
-* .email_address_change(change, fired_at)
-* .email_cleaned(clean, fired_at)
-* .campaign_sending_status(status, fired_at)
+* subscribe
+* unsubscribe
+* profile_update
+* email_address_change
+* email_cleaned
+* campaign_sending_status
 
-As you can probably guess from the method signatures, each notification will provide an object with all the data from MailChimp, plus the time the notification was fired. When the methods get called, you get to do your thing with the data provided. Have fun!
+As you can see in the example, each notification will provide an object with all the data from MailChimp, plus the time the notification was fired. When the notification is fired, you get to do your thing with the data provided. Have fun!
 
 h2. Contributing
 
@@ -41,4 +45,4 @@ Pull requests without tests may be rejected purely on that basis. You've been wa
 
 h2. Credits
 
-Copyright (c) 2012, Panthoot is developed and maintained by Pat Allan on behalf of "Inspire9":http://inspire9.com, and is released under the open MIT Licence.
+Copyright (c) 2013, Panthoot is developed and maintained by Pat Allan on behalf of "Inspire9":http://inspire9.com, and is released under the open MIT Licence.
