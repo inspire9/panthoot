@@ -18,4 +18,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'combustion',  '~> 0.5.0'
   gem.add_development_dependency 'rails',       '~> 3.2.13'
   gem.add_development_dependency 'rspec-rails', '~> 2.13.2'
+  gem.add_development_dependency 'test-unit',   '~> 3.2.8'
 end
